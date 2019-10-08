@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 @RestController
 
@@ -31,15 +32,22 @@ public class CountryController {
 
 
     ///names/start/{letter}...return the countries alphabetically that begin with the given letter
-//    @GetMapping(value = "/names/start/{letter}",
-//            produces = {"applicaton/json"})
-//    public ResponseEntity<?> alphaLetterCountries(
-//            @PathVariable char letter) {
-//    ArrayList<Country> anothaList = new JavaCountriesApplication.myCountryList.findLetters(c -> c.getName().toUpperCase().charAt(0) == Character.toUpperCase(letter));
-//
-//            anothaList.sort((c1, c2) -> c1.getName().compareToIgnoreCase(c2.getName()));
-//        return new ResponseEntity<>(anothaList, HttpStatus.OK);
-//    }
+    @GetMapping(value = "/names/start/{letter}",
+            produces = {"application/json"})
+    public ResponseEntity<?> alphaLetterCountries(
+            @PathVariable char letter) {
+
+
+    ArrayList<Country> newVar = JavaCountriesApplication.myCountryList.findCountries(c -> c.getName().toUpperCase().charAt(0) == Character.toUpperCase(letter));
+
+    newVar.sort((c1, c2) -> c1.getName().compareToIgnoreCase(c2.getName()));
+
+
+
+        return new ResponseEntity<>(
+                newVar, HttpStatus.OK);
+    }
+
 
 
 
@@ -51,7 +59,7 @@ public ResponseEntity<?> alphaLengthCountries(
         @PathVariable int number)
 {
     return new ResponseEntity<>(
-            JavaCountriesApplication.myCountryList.findCountry(c -> c.getName().length() == number),
+            JavaCountriesApplication.myCountryList.findCountries(c -> c.getName().length() == number),
             HttpStatus.OK);
 }
 
@@ -64,25 +72,63 @@ public ResponseEntity<?> popSizeCountries(
         @PathVariable int people)
 {
     return new ResponseEntity<>(
-            JavaCountriesApplication.myCountryList.findCountry(c -> c.getPop() >= people),
+            JavaCountriesApplication.myCountryList.findCountries(c -> c.getPop() >= people),
             HttpStatus.OK);
 }
 
 
 //    /population/min... return the country with the smallest population
-//@GetMapping(value="population/min",
-//            produces={"application/json"})
-//    public ResponseEntity<> smallPop() {
-//    ArrayList<Country> newCountry = JavaCountriesApplication.myCountryList.countryList.sort((c1, c2) -> c1.getPop() < c2.getPop());
-//    return new ResponseEntity<>(JavaCountriesApplication.myCountryList.countryList, HttpStatus.OK);
-//}
+    @GetMapping(value = "/population/min",
+            produces = {"application/json"})
+    public ResponseEntity<?> popSmallCountries() {
+        JavaCountriesApplication.myCountryList.countryList.sort(((c1, c2) -> (int)(c1.getPop() - c2.getPop())));
+        return new ResponseEntity<>(
+                (JavaCountriesApplication.myCountryList.countryList.get(0)),
+                HttpStatus.OK);
+    }
 
 
 //    /population/max... return the country with the largest population
+@GetMapping(value = "/population/max",
+        produces = {"application/json"})
+public ResponseEntity<?> popBigCountries() {
+    JavaCountriesApplication.myCountryList.countryList.sort(((c1, c2) -> (int)(c2.getPop() - c1.getPop())));
+    return new ResponseEntity<>(
+            (JavaCountriesApplication.myCountryList.countryList.get(0)),
+            HttpStatus.OK);
+}
+
 
 //        /age/age/{age}... return the countries that have a median age equal to or greater than the given age
+@GetMapping(value = "/age/age/{age}",
+        produces = {"application/json"})
+public ResponseEntity<?> ageOldCountries(
+        @PathVariable int age) {
+    return new ResponseEntity<>(
+            JavaCountriesApplication.myCountryList.findCountries(c -> c.getAge() >= age),
+            HttpStatus.OK);
+}
+
 
 //    /age/min....return the country with the smallest median age
+@GetMapping(value = "/age/min",
+        produces = {"application/json"})
+public ResponseEntity<?> ageYoungCountries() {
+    JavaCountriesApplication.myCountryList.countryList.sort(Comparator.comparingInt(Country::getAge));
+    return new ResponseEntity<>(
+            (JavaCountriesApplication.myCountryList.countryList.get(0)),
+            HttpStatus.OK);
+}
+
 
 // /age/max....return the country the the greatest median age
+@GetMapping(value = "/age/max",
+        produces = {"application/json"})
+public ResponseEntity<?> ageOldCountries() {
+    JavaCountriesApplication.myCountryList.countryList.sort(((c1, c2) -> c2.getAge() - c1.getAge()));
+    return new ResponseEntity<>(
+            (JavaCountriesApplication.myCountryList.countryList.get(0)),
+            HttpStatus.OK);
+}
+
 }

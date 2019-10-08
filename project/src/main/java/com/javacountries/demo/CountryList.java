@@ -211,7 +211,18 @@ public class CountryList {
     }
 
     //try this instead...find a COUNTRY which matches the Lambda expression in CountryController.
-    public ArrayList<Country> findCountry(CheckCountry tester) {
+    public Country findCountry(CheckCountry tester) {
+
+        for (Country c: countryList) {
+            if (tester.test(c)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    //Step 2...return a FULL LIST of COUNTRIES that match the Lambda expression I'll write in Country Controller.
+    public ArrayList<Country> findCountries(CheckCountry tester) {
         ArrayList<Country> tempList = new ArrayList<>();
 
         for (Country c: countryList) {
@@ -221,6 +232,4 @@ public class CountryList {
         }
         return tempList;
     }
-
-    //Step 2...return a FULL LIST of COUNTRIES that match the Lambda expression I'll write in Country Controller.
 }
